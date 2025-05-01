@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -24,6 +25,6 @@ app.use("/api", require("./routes/app.routes.js"));
 app.use(erros.errorHandler);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.listen(process.env.port || 4000, function () {
+app.listen(process.env.PORT || 4000, function () {
   console.log("Ready to Go!");
 });
