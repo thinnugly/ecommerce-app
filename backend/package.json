@@ -1,0 +1,20 @@
+{
+  "name": "compras_por_aplicativo_api",
+  "version": "1.0.0",
+  "description": "Compras por Aplicativo Movel",
+  "license": "ISC",
+  "author": "Renato Muiambo & Alberto Fanheiro",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.14.1",
+    "multer": "^1.4.5-lts.2",
+    "nodemon": "^3.1.10",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
