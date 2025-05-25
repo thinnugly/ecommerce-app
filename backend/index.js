@@ -6,6 +6,7 @@ const { MONGO_DB_CONFIG } = require("./config/app.config");
 const erros = require("./middleware/errors.js");
 const swaggerUi = require("swagger-ui-express"),
   swaggerDocument = require("./swagger.json");
+const cors = require('cors');
 
 mongoose.Promise = global.Promise;
 mongoose
@@ -20,6 +21,7 @@ mongoose
   );
 
 app.use(express.json());
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use("/api", require("./routes/app.routes.js"));
 app.use(erros.errorHandler);

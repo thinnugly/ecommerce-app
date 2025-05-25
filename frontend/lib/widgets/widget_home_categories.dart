@@ -2,30 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/models/pagination.dart';
-import 'package:frontend/providers/category_provider.dart';
+import 'package:frontend/models/product_filter.dart';
+import 'package:frontend/providers.dart';
 
 class HomeCategoriesWidget extends ConsumerWidget {
   const HomeCategoriesWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      child: Column(children: [
+    return Column(
+      children: [
         const Padding(
           padding: EdgeInsets.all(8.0),
-          child: Text(
-            "All Categories",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              "All Categories",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: _categoriesList(ref),
-        )
-      ],),
+        ),
+      ],
     );
   }
 
@@ -36,14 +37,17 @@ class HomeCategoriesWidget extends ConsumerWidget {
 
     return categories.when(
       data: (list) {
-        return _buildCategoryList(list!);
+        if (list == null || list.isEmpty) {
+          return Center(child: Text('No categories available.'));
+        }
+        return _buildCategoryList(list, ref);
       },
       error: (err, _) => Center(child: Text('Err: $err')),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 
-  Widget _buildCategoryList(List<Category> categories) {
+  Widget _buildCategoryList(List<Category> categories, WidgetRef ref) {
     return Container(
       height: 100,
       alignment: Alignment.centerLeft,
@@ -55,7 +59,24 @@ class HomeCategoriesWidget extends ConsumerWidget {
         itemBuilder: (context, index) {
           var data = categories[index];
           return GestureDetector(
-            onTap: () {},
+            onTap: () {
+              ProductFilterModel filterModel = ProductFilterModel(
+                paginationModel: PaginationModel(page: 1, pageSize: 10),
+                categoryId: data.categoryId
+              );
+              ref
+                  .read(productsFilterProvider.notifier)
+                  .setProductFilter(filterModel);
+              ref.read(productsNotifierProvider.notifier).getProducts();
+              
+              Navigator.of(context).pushNamed(
+                "/products",
+                arguments: {
+                  'categoryId': data.categoryId,
+                  'categoryName': data.categoryName,
+                },
+              );
+            },
             child: Padding(
               padding: EdgeInsets.all(8),
               child: Column(

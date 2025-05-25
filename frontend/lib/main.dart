@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/pages/products_page.dart';
 
 void main() {
   runApp(
@@ -17,6 +18,9 @@ class MyApp extends StatelessWidget {
       title: 'Meu App com Riverpod',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const HomePage(),
+      routes: <String, WidgetBuilder> {
+        '/products': (BuildContext context) => const ProductsPage()
+      },
     );
   }
 }

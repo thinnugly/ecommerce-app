@@ -5,7 +5,7 @@ async function createCategory(params, callback) {
   if (!params.categoryName) {
     return callback(
       {
-        message: "category Name Required.",
+        message: "Category Name Required.",
       },
       ""
     );
