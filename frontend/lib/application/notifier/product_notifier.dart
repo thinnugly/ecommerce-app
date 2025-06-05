@@ -4,14 +4,15 @@ import 'package:frontend/application/state/product_state.dart';
 import 'package:frontend/models/pagination.dart';
 import 'package:frontend/models/product_filter.dart';
 
-class ProductNotifier extends StateNotifier<ProductsState>{
+class ProductNotifier extends StateNotifier<ProductsState> {
   final APIService _apiService;
   final ProductFilterModel _filterModel;
 
-  ProductNotifier(this._apiService, this._filterModel) : super(const ProductsState());
+  ProductNotifier(this._apiService, this._filterModel)
+    : super(const ProductsState());
 
   int _page = 1;
-  
+
   Future<void> getProducts() async {
     if (state.isLoading || !state.hasNext) {
       return;
@@ -19,31 +20,30 @@ class ProductNotifier extends StateNotifier<ProductsState>{
 
     state = state.copyWith(isLoading: true);
     var filterModel = _filterModel.copyWith(
-      paginationModel: PaginationModel(
-        page: _page, 
-        pageSize: 10,
-        )
+      paginationModel: PaginationModel(page: _page, pageSize: 10),
     );
 
     final products = await _apiService.getProducts(filterModel);
     final newProducts = [...state.products, ...products!];
 
-    if(products.length % 10 !=0 || products.isEmpty) {
+    if (products.length % 10 != 0 || products.isEmpty) {
       state = state.copyWith(hasNext: false);
     }
 
-    state = state.copyWith(products: newProducts);
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      state = state.copyWith(products: newProducts);
 
-    _page++;
+      _page++;
 
-    state = state.copyWith(isLoading: false);
+      state = state.copyWith(isLoading: false);
+    });
   }
 
   Future<void> refreshProducts() async {
-      state = state.copyWith(products: [], hasNext: false);
+    state = state.copyWith(products: [], hasNext: true);
 
-      _page = 1;
+    _page = 1;
 
-      await getProducts();
+    await getProducts();
   }
 }

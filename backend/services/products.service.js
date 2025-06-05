@@ -1,5 +1,4 @@
 const { product } = require("../models/product.model");
-const { category } = require("../models/category.model");
 const { MONGO_DB_CONFIG } = require("../config/app.config");
 
 async function createProduct(params, callback) {

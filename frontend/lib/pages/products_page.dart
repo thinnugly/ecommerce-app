@@ -52,7 +52,7 @@ class _ProductFilters extends ConsumerWidget {
     ProductSortModel(value: "productPrice", label: "Price: Low to High"),
   ];
 
-  _ProductFilters({Key? key, this.categoryName, this.categoryId});
+  _ProductFilters({this.categoryName, this.categoryId});
 
   final String? categoryId;
   final String? categoryName;
@@ -60,62 +60,68 @@ class _ProductFilters extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filterProvider = ref.watch(productsFilterProvider);
-    return RefreshIndicator(
-      onRefresh: () async {
-        ref.read(productsNotifierProvider.notifier).refreshProducts();
-      },
-      child: Container(
-        height: 51,
-        margin: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                categoryName!,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
+    return Container(
+      height: 51,
+      margin: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              categoryName!,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             ),
-            const Spacer(),
-            Container(
-              decoration: BoxDecoration(color: Colors.grey[300]),
-              child: PopupMenuButton(
-                onSelected: (sortBy) {
-                  ProductFilterModel filterModel = ProductFilterModel(
-                    paginationModel: PaginationModel(page: 0, pageSize: 10),
-                    categoryId: filterProvider.categoryId,
-                    sortBy: sortBy.toString(),
+          ),
+          const Spacer(),
+          Container(
+            decoration: BoxDecoration(color: Colors.grey[300]),
+            child: PopupMenuButton(
+              onSelected: (sortBy) {
+                ProductFilterModel filterModel = ProductFilterModel(
+                  paginationModel: PaginationModel(page: 0, pageSize: 10),
+                  categoryId: filterProvider.categoryId,
+                  sortBy: sortBy.toString(),
+                );
+                ref
+                    .read(productsFilterProvider.notifier)
+                    .setProductFilter(filterModel);
+
+                ref.read(productsNotifierProvider.notifier).getProducts();
+              },
+              initialValue: filterProvider.sortBy,
+              itemBuilder: (BuildContext context) {
+                return _sortByOptions.map((item) {
+                  return PopupMenuItem(
+                    value: item.value,
+                    child: Text(item.label!),
                   );
-                  ref
-                      .read(productsFilterProvider.notifier)
-                      .setProductFilter(filterModel);
-        
-                  ref.read(productsNotifierProvider.notifier).getProducts();
-                },
-                initialValue: filterProvider.sortBy,
-                itemBuilder: (BuildContext context) {
-                  return _sortByOptions.map((item) {
-                    return PopupMenuItem(
-                      value: item.value,
-                      child: Text(item.label!),
-                    );
-                  }).toList();
-                },
-                icon: const Icon(Icons.filter_list_alt),
-              ),
+                }).toList();
+              },
+              icon: const Icon(Icons.filter_list_alt),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class _ProductList extends ConsumerWidget {
+  final ScrollController _scrollController = ScrollController();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productsState = ref.watch(productsNotifierProvider);
 
+    _scrollController.addListener(() {
+      if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        final productsViewModel = ref.read(productsNotifierProvider.notifier);
+        final productsState = ref.read(productsNotifierProvider);
+
+        if(productsState.hasNext) {
+          productsViewModel.getProducts();
+        }
+      }
+    });
     if (productsState.products.isEmpty) {
       if (!productsState.hasNext && !productsState.isLoading) {
         return const Center(child: Text("No products available."));
@@ -123,19 +129,33 @@ class _ProductList extends ConsumerWidget {
       return const LinearProgressIndicator();
     }
 
-    return Column(
-      children: [
-        Flexible(
-          flex: 1,
-          child: GridView.count(
-            crossAxisCount: 2,
-            children: List.generate(productsState.products.length, (index) {
-              return ProductCard(model: productsState.products[index]
-              );
-            }),
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.read(productsNotifierProvider.notifier).refreshProducts();
+      },
+      child: Column(
+        children: [
+          Flexible(
+            flex: 1,
+            child: GridView.count(
+              controller: _scrollController,
+              crossAxisCount: 2,
+              children: List.generate(productsState.products.length, (index) {
+                return ProductCard(model: productsState.products[index]);
+              }),
+            ),
           ),
-        ),
-      ],
+          Visibility(
+            visible: productsState.isLoading && productsState.products.isNotEmpty,
+            child: const SizedBox(
+              height: 35,
+              width: 35,
+              child: CircularProgressIndicator(),
+            ),
+            )
+        ],
+      ),
     );
   }
 }
+ 
