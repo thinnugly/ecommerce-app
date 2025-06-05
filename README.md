@@ -60,7 +60,7 @@ Comprasporplicativo/backend
 1. Clone o repositório:
    ```bash
    git clone https://github.com/thinnugly/ecommerce-app.git
-   cd comprasporplicativo/backend
+   cd ecommerce-app/backend
    ```
 
 2. Instale as dependências:
