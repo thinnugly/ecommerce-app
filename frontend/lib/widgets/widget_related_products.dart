@@ -8,53 +8,47 @@ import 'package:frontend/models/product.dart';
 import 'package:frontend/models/product_filter.dart';
 import 'package:frontend/providers.dart';
 
-class HomeProductsWidget extends ConsumerWidget {
-  const HomeProductsWidget({super.key});
+class RelatedProductsWidget extends ConsumerWidget {
+  const RelatedProductsWidget({required this.relatedProducts, super.key});
+  final List<String> relatedProducts;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      // color: const Color(0xffF4F7FA),
+      // color: Colors.white,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16, top: 15),
+          if (relatedProducts.isNotEmpty)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  "Top 10 Products",
+                  "Related Products",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _productsList(ref),
-          ),
+            ),
+          if (relatedProducts.isNotEmpty) _productList(ref),
         ],
       ),
     );
   }
 
-  Widget _productsList(WidgetRef ref) {
+  Widget _productList(WidgetRef ref) {
     final products = ref.watch(
-      productsProvider(
+      relatedProductsProvider(
         ProductFilterModel(
           paginationModel: PaginationModel(page: 1, pageSize: 10),
+          productIds: relatedProducts,
         ),
       ),
     );
 
     return products.when(
       data: (list) {
-        if (list == null || list.isEmpty) {
-          return Center(child: Text('No products available.'));
-        }
-        return _buildProductList(list);
+        return _buildProductList(list!);
       },
-
       error: (err, _) => Center(child: Text('Err: $err')),
       loading: () => const Center(child: CircularProgressIndicator()),
     );
@@ -68,7 +62,7 @@ class HomeProductsWidget extends ConsumerWidget {
         physics: ClampingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         itemCount: products.length,
-        itemBuilder: (contect, index) {
+        itemBuilder: (context, index) {
           var data = products[index];
           return GestureDetector(onTap: () {}, child: ProductCard(model: data));
         },

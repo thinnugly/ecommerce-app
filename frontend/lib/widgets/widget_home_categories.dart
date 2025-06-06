@@ -15,7 +15,7 @@ class HomeCategoriesWidget extends ConsumerWidget {
         const Padding(
           padding: EdgeInsets.all(8.0),
           child: Align(
-            alignment: Alignment.center,
+            alignment: Alignment.topLeft,
             child: Text(
               "All Categories",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

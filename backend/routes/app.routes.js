@@ -2,6 +2,7 @@ const categoryController = require("../controllers/categories.controller");
 const productController = require("../controllers/products.controller");
 const userController = require("../controllers/users.controller");
 const sliderController = require("../controllers/sliders.controller");
+const relatedProductController = require("../controllers/related-product.controller");
 
 const express = require("express");
 const router = express.Router();
@@ -27,5 +28,7 @@ router.get("/slider/:id", sliderController.findOne);
 router.put("/slider/:id", sliderController.update);
 router.delete("/slider/:id", sliderController.delete);
 
+router.post("/relatedProduct", relatedProductController.create);
+router.delete("/relatedProduct/:productId/:relatedProductId", relatedProductController.delete);
 
 module.exports = router;

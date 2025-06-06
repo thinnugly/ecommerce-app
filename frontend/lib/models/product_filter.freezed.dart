@@ -20,6 +20,7 @@ mixin _$ProductFilterModel {
   PaginationModel get paginationModel => throw _privateConstructorUsedError;
   String? get categoryId => throw _privateConstructorUsedError;
   String? get sortBy => throw _privateConstructorUsedError;
+  List<String>? get productIds => throw _privateConstructorUsedError;
 
   /// Create a copy of ProductFilterModel
   /// with the given fields replaced by the non-null parameter values.
@@ -39,6 +40,7 @@ abstract class $ProductFilterModelCopyWith<$Res> {
     PaginationModel paginationModel,
     String? categoryId,
     String? sortBy,
+    List<String>? productIds,
   });
 
   $PaginationModelCopyWith<$Res> get paginationModel;
@@ -62,6 +64,7 @@ class _$ProductFilterModelCopyWithImpl<$Res, $Val extends ProductFilterModel>
     Object? paginationModel = null,
     Object? categoryId = freezed,
     Object? sortBy = freezed,
+    Object? productIds = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -80,6 +83,11 @@ class _$ProductFilterModelCopyWithImpl<$Res, $Val extends ProductFilterModel>
                     ? _value.sortBy
                     : sortBy // ignore: cast_nullable_to_non_nullable
                         as String?,
+            productIds:
+                freezed == productIds
+                    ? _value.productIds
+                    : productIds // ignore: cast_nullable_to_non_nullable
+                        as List<String>?,
           )
           as $Val,
     );
@@ -109,6 +117,7 @@ abstract class _$$ProductFilterModelImplCopyWith<$Res>
     PaginationModel paginationModel,
     String? categoryId,
     String? sortBy,
+    List<String>? productIds,
   });
 
   @override
@@ -132,6 +141,7 @@ class __$$ProductFilterModelImplCopyWithImpl<$Res>
     Object? paginationModel = null,
     Object? categoryId = freezed,
     Object? sortBy = freezed,
+    Object? productIds = freezed,
   }) {
     return _then(
       _$ProductFilterModelImpl(
@@ -150,6 +160,11 @@ class __$$ProductFilterModelImplCopyWithImpl<$Res>
                 ? _value.sortBy
                 : sortBy // ignore: cast_nullable_to_non_nullable
                     as String?,
+        productIds:
+            freezed == productIds
+                ? _value._productIds
+                : productIds // ignore: cast_nullable_to_non_nullable
+                    as List<String>?,
       ),
     );
   }
@@ -162,7 +177,8 @@ class _$ProductFilterModelImpl implements _ProductFilterModel {
     required this.paginationModel,
     this.categoryId,
     this.sortBy,
-  });
+    final List<String>? productIds,
+  }) : _productIds = productIds;
 
   @override
   final PaginationModel paginationModel;
@@ -170,10 +186,19 @@ class _$ProductFilterModelImpl implements _ProductFilterModel {
   final String? categoryId;
   @override
   final String? sortBy;
+  final List<String>? _productIds;
+  @override
+  List<String>? get productIds {
+    final value = _productIds;
+    if (value == null) return null;
+    if (_productIds is EqualUnmodifiableListView) return _productIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'ProductFilterModel(paginationModel: $paginationModel, categoryId: $categoryId, sortBy: $sortBy)';
+    return 'ProductFilterModel(paginationModel: $paginationModel, categoryId: $categoryId, sortBy: $sortBy, productIds: $productIds)';
   }
 
   @override
@@ -185,12 +210,21 @@ class _$ProductFilterModelImpl implements _ProductFilterModel {
                 other.paginationModel == paginationModel) &&
             (identical(other.categoryId, categoryId) ||
                 other.categoryId == categoryId) &&
-            (identical(other.sortBy, sortBy) || other.sortBy == sortBy));
+            (identical(other.sortBy, sortBy) || other.sortBy == sortBy) &&
+            const DeepCollectionEquality().equals(
+              other._productIds,
+              _productIds,
+            ));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, paginationModel, categoryId, sortBy);
+  int get hashCode => Object.hash(
+    runtimeType,
+    paginationModel,
+    categoryId,
+    sortBy,
+    const DeepCollectionEquality().hash(_productIds),
+  );
 
   /// Create a copy of ProductFilterModel
   /// with the given fields replaced by the non-null parameter values.
@@ -209,6 +243,7 @@ abstract class _ProductFilterModel implements ProductFilterModel {
     required final PaginationModel paginationModel,
     final String? categoryId,
     final String? sortBy,
+    final List<String>? productIds,
   }) = _$ProductFilterModelImpl;
 
   @override
@@ -217,6 +252,8 @@ abstract class _ProductFilterModel implements ProductFilterModel {
   String? get categoryId;
   @override
   String? get sortBy;
+  @override
+  List<String>? get productIds;
 
   /// Create a copy of ProductFilterModel
   /// with the given fields replaced by the non-null parameter values.

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/pages/dashboard_page.dart';
 import 'package:frontend/pages/login_page.dart';
+import 'package:frontend/pages/product_details_page.dart';
 import 'package:frontend/pages/products_page.dart';
 import 'package:frontend/pages/register_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const DashboardPage(),
         '/products': (context) => const ProductsPage(),
+        '/product-details': (context) => const ProductDetailsPage(),
       },
     );
   }

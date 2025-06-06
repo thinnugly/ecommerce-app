@@ -12,23 +12,33 @@ class ProductCard extends StatelessWidget {
     return Container(
       width: 150,
       margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
-      decoration: const BoxDecoration(color: Colors.white),
+      decoration: const BoxDecoration(color: Colors.white70),
       child: Stack(
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                height: 100,
-                width: 170,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.network(
-                    model.fullImagePath,
-                    fit: BoxFit.cover,
+              GestureDetector(
+                child: SizedBox(
+                  height: 100,
+                  width: 170,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: Image.network(
+                      model.fullImagePath,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
+                onTap: () {
+                  Navigator.of(context).pushNamed(
+                    "/product-details",
+                    arguments: {
+                      'productId':model.productId
+                    }
+                  );
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8, left: 10),

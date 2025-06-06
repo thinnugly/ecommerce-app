@@ -11,7 +11,7 @@ class HomeSliderWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(color: Colors.white, child: _sliderList(ref));
+    return Container(child: _sliderList(ref));
   }
 
   Widget _sliderList(WidgetRef ref) {
@@ -45,7 +45,7 @@ class HomeSliderWidget extends ConsumerWidget {
         margin: const EdgeInsets.symmetric(horizontal: 5),
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 20, width: 20,),
             Expanded(
               child: Image.network(
                 model.fullImagePath,

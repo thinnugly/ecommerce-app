@@ -15,7 +15,6 @@ final categoriesProvider =
       paginationModel,
     ) {
       final apiRepository = ref.watch(apiService);
-
       return apiRepository.getCategories(
         paginationModel.page,
         paginationModel.pageSize,
@@ -28,7 +27,6 @@ final productsProvider =
       productFilterModel,
     ) {
       final apiRepository = ref.watch(apiService);
-
       return apiRepository.getProducts(productFilterModel);
     });
 
@@ -45,9 +43,27 @@ final productsNotifierProvider =
       ),
     );
 
-final slidersProvider = 
-      FutureProvider.family<List<SliderModel>?, PaginationModel>(
-        (ref, paginationModel) {
-          final sliderRepo = ref.watch(apiService);
-          return sliderRepo.getSliders(paginationModel.page, paginationModel.pageSize);
-        });
+final slidersProvider = FutureProvider.family<
+  List<SliderModel>?,
+  PaginationModel
+>((ref, paginationModel) {
+  final sliderRepo = ref.watch(apiService);
+  return sliderRepo.getSliders(paginationModel.page, paginationModel.pageSize);
+});
+
+final productDetailsProvider = FutureProvider.family<Product?, String>((
+  ref,
+  productId,
+) {
+  final apiRepository = ref.watch(apiService);
+  return apiRepository.getProductsDetails(productId);
+});
+
+final relatedProductsProvider =
+    FutureProvider.family<List<Product>?, ProductFilterModel>((
+      ref,
+      productFilterModel,
+    ) {
+      final apiRepository = ref.watch(apiService);
+      return apiRepository.getProducts(productFilterModel);
+    });

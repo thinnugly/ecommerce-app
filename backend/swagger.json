@@ -28,6 +28,10 @@
         {
             "name": "Slider",
             "description": "Slider API"
+        },
+        {
+            "name": "Related Product",
+            "description": "Related Product API"
         }
     ],
     "schemes": [
@@ -257,6 +261,13 @@
                 ],
                 "summary": "Get All Products",
                 "parameters": [
+                    {
+                        "name": "productIds",
+                        "in": "query",
+                        "required": false,
+                        "description": "Product Ids",
+                        "type": "string"
+                    },
                     {
                         "name": "productName",
                         "in": "query",
@@ -662,6 +673,72 @@
                     }
                 }
             }
+        },
+        "/api/relatedProduct": {
+            "post": {
+                "tags": [
+                    "Related Product"
+                ],
+                "summary": "Create Related Product",
+                "parameters": [
+                    {
+                        "name": "RelatedProductModel",
+                        "in": "body",
+                        "required": true,
+                        "description": "Related Product Registration",
+                        "type": "object",
+                        "schema": {
+                            "$ref": "#/definitions/RelatedProductModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/RelatedProductModelServiceResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/relatedProduct/{productId}/{relatedProductId}": {
+            "delete": {
+                "tags": [
+                    "Related Product"
+                ],
+                "summary": "Delete Related Product",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "in": "path",
+                        "required": true,
+                        "description": "Product Id",
+                        "type": "string"
+                    },
+                    {
+                        "name": "relatedProductId",
+                        "in": "path",
+                        "required": true,
+                        "description": "Related Product Id",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/RelatedProductModelServiceResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Relacionamento não encontrado"
+                    },
+                    "default": {
+                        "description": "Erro inesperado"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -786,6 +863,20 @@
                 }
             }
         },
+        "RelatedProductModel": {
+            "required": [
+                "product",
+                "relatedProduct"
+            ],
+            "properties": {
+                "product": {
+                    "type": "string"
+                },
+                "relatedProduct": {
+                    "type": "string"
+                }
+            }
+        },
         "RegisterModelServiceResponse": {
             "properties": {
                 "message": {
@@ -847,6 +938,19 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/Slider"
+                    }
+                }
+            }
+        },
+        "RelatedProductModelServiceResponse": {
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/RelatedProductModel"
                     }
                 }
             }
