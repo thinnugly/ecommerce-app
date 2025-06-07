@@ -71,7 +71,7 @@ class _ProductFilters extends ConsumerWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               categoryName!,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.deepOrangeAccent,),
             ),
           ),
           const Spacer(),

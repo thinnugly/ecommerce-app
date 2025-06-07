@@ -18,7 +18,7 @@ class HomeCategoriesWidget extends ConsumerWidget {
             alignment: Alignment.topLeft,
             child: Text(
               "All Categories",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepOrangeAccent,),
             ),
           ),
         ),

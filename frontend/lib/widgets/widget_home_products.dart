@@ -24,7 +24,7 @@ class HomeProductsWidget extends ConsumerWidget {
                 padding: const EdgeInsets.only(left: 16, top: 15),
                 child: Text(
                   "Top 10 Products",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepOrangeAccent,),
                 ),
               ),
             ],

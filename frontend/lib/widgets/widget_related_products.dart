@@ -25,7 +25,7 @@ class RelatedProductsWidget extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
                   "Related Products",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepOrangeAccent,),
                 ),
               ),
             ),

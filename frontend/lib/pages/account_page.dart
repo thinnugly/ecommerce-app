@@ -39,11 +39,11 @@ class _AccountPageState extends State<AccountPage> {
       appBar: AppBar(
         title: const Text(
           'My Account',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-            color: Colors.deepOrangeAccent,
-          ),
+          // style: TextStyle(
+          //   fontWeight: FontWeight.bold,
+          //   fontSize: 18,
+          //   color: Colors.deepOrangeAccent,
+          // ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
