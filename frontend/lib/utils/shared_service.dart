@@ -14,6 +14,7 @@ class SharedService {
     await userBox.put('token', userData['token']);
     await userBox.put('email', userData['email']);
     await userBox.put('fullName', userData['fullName']);
+    await userBox.put('userId', userData['userId']);
   }
 
   static String? getToken() => userBox.get('token');
@@ -27,6 +28,15 @@ class SharedService {
 
   static Future<void> logout() async {
     await userBox.clear();
+  }
+
+  static Map<String, dynamic> loginDetails() {
+    return {
+      'token': getToken(),
+      'email': userBox.get('email'),
+      'fullName': getNome(),
+      'userId': userBox.get('userId'),
+    };
   }
 }
 

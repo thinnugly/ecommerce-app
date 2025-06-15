@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/account_page.dart';
+import 'package:frontend/pages/cart_page.dart';
 import 'package:frontend/pages/home_page.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -14,7 +15,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   final List<Widget> widgetList = [
     const HomePage(),
-    const HomePage(),
+    const CartPage(),
     const HomePage(),
     const AccountPage(),
   ];

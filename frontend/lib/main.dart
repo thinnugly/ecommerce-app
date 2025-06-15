@@ -14,6 +14,7 @@ import 'package:logger/logger.dart';
 
 final logger = Logger();
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Meu App com Hive + Riverpod',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const SplashScreen(),
+      navigatorKey: navigatorKey,
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),

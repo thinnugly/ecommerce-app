@@ -214,7 +214,9 @@ class _LoginPageState extends State<LoginPage> {
                         'token': response['token'],
                         'fullName': response['fullName'],
                         'email': email,
+                        'userId': response['userId'],
                       });
+                      // logger.i(SharedService.loginDetails());
                       FormHelper.showSimpleAlertDialog(
                         context,
                         Config.appName,

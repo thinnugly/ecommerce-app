@@ -1,16 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/shared_service.dart';
+import 'package:frontend/providers.dart';
 
-class AccountPage extends StatefulWidget {
+class AccountPage extends ConsumerStatefulWidget {
   const AccountPage({super.key});
 
   @override
-  State<AccountPage> createState() => _AccountPageState();
+  ConsumerState<AccountPage> createState() => _AccountPageState();
 }
 
-class _AccountPageState extends State<AccountPage> {
+class _AccountPageState extends ConsumerState<AccountPage> {
   String nomeUsuario = '';
 
   @override
@@ -28,8 +30,11 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  void _logout(BuildContext context) async {
+  void _logout() async {
     await SharedService.logout();
+
+    // Limpa o carrinho ao fazer logout
+    ref.invalidate(cartItemsProvider);
     Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
   }
 
@@ -37,14 +42,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'My Account',
-          // style: TextStyle(
-          //   fontWeight: FontWeight.bold,
-          //   fontSize: 18,
-          //   color: Colors.deepOrangeAccent,
-          // ),
-        ),
+        title: const Text('My Account'),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 1,
@@ -54,7 +52,7 @@ class _AccountPageState extends State<AccountPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
-            mainAxisSize: MainAxisSize.min, // centraliza verticalmente
+            mainAxisSize: MainAxisSize.min,
             children: [
               const CircleAvatar(
                 radius: 50,
@@ -73,14 +71,16 @@ class _AccountPageState extends State<AccountPage> {
               ),
               const SizedBox(height: 40),
               ElevatedButton.icon(
-                onPressed: () => _logout(context),
+                onPressed: _logout,
                 icon: const Icon(Icons.logout),
                 label: const Text('Logout'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 12,
+                  ),
                   textStyle: const TextStyle(fontSize: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

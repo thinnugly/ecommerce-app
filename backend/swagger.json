@@ -32,6 +32,10 @@
         {
             "name": "Related Product",
             "description": "Related Product API"
+        },
+        {
+            "name": "Cart",
+            "description": "Cart API"
         }
     ],
     "schemes": [
@@ -739,6 +743,117 @@
                     }
                 }
             }
+        },
+        "/api/cart": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add Products On cart",
+                "parameters": [
+                    {
+                        "name": "CartModel",
+                        "in": "body",
+                        "required": true,
+                        "description": "Products to add to cart",
+                        "schema": {
+                            "$ref": "#/definitions/CartModel"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer "
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CartServiceResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get All Products On Cart",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer "
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CartServiceResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Remove Products On cart",
+                "parameters": [
+                    {
+                        "name": "CartRemoveModel",
+                        "in": "body",
+                        "required": true,
+                        "description": "Cart Remove Model",
+                        "type": "object",
+                        "schema": {
+                            "$ref": "#/definitions/CartRemoveModel"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer "
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CartServiceResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -877,6 +992,45 @@
                 }
             }
         },
+        "CartModel": {
+            "required": [
+                "products"
+            ],
+            "properties": {
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "product": {
+                                "type": "string",
+                                "description": "ID do produto"
+                            },
+                            "qty": {
+                                "type": "integer",
+                                "description": "Quantidade do produto",
+                                "default": 1
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "CartRemoveModel": {
+            "required": [
+                "productId",
+                "qty"
+            ],
+            "properties": {
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number",
+                    "default": 1
+                }
+            }
+        },
         "RegisterModelServiceResponse": {
             "properties": {
                 "message": {
@@ -951,6 +1105,27 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/RelatedProductModel"
+                    }
+                }
+            }
+        },
+        "CartServiceResponse": {
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "userId": {
+                            "type": "string"
+                        },
+                        "products": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CartModel"
+                            }
+                        }
                     }
                 }
             }

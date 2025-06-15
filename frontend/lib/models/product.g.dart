@@ -10,13 +10,13 @@ _$ProductImpl _$$ProductImplFromJson(Map<String, dynamic> json) =>
     _$ProductImpl(
       productName: json['productName'] as String,
       category: Category.fromJson(json['category'] as Map<String, dynamic>),
-      productShortDescription: json['productShortDescription'] as String,
+      productShortDescription: json['productShortDescription'] as String?,
       productDescription: json['productDescription'] as String?,
       productPrice: (json['productPrice'] as num).toDouble(),
       productSalePrice: (json['productSalePrice'] as num).toDouble(),
-      productSKU: json['productSKU'] as String,
-      productType: json['productType'] as String,
-      stockStatus: json['stockStatus'] as String,
+      productSKU: json['productSKU'] as String?,
+      productType: json['productType'] as String?,
+      stockStatus: json['stockStatus'] as String?,
       productImage: json['productImage'] as String,
       productId: json['productId'] as String,
       relatedProducts:

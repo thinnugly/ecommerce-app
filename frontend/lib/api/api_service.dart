@@ -1,22 +1,25 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/config.dart';
+import 'package:frontend/models/cart.dart';
 import 'package:frontend/models/product.dart';
 import 'package:frontend/models/product_filter.dart';
 import 'package:frontend/models/slider.dart';
+import 'package:frontend/utils/shared_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/models/category.dart';
 import 'package:logger/logger.dart';
 
-
 final apiService = Provider((ref) => APIService());
 final logger = Logger();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class APIService {
   static var client = http.Client();
-  
+
   Future<List<Category>?> getCategories(page, pageSize) async {
     Map<String, String> requestHeaders = {'Content-Type': 'application/json'};
 
@@ -147,18 +150,144 @@ class APIService {
       return null;
     }
   }
-  
+
   Future<Product?> getProductsDetails(String productId) async {
     Map<String, String> requestHeaders = {'Content-Type': 'application/json'};
 
     var url = Uri.http(Config.apiURL, "${Config.productAPI}/$productId");
     var response = await client.get(url, headers: requestHeaders);
-    
+
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       return Product.fromJson(data["data"]);
     } else {
       return null;
+    }
+  }
+
+  Future<Cart?> getCart() async {
+    var loginDetails = SharedService.loginDetails();
+    String? token = loginDetails['token'];
+
+    if (token == null) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    Map<String, String> requestHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    var url = Uri.http(Config.apiURL, Config.cartAPI);
+    var response = await client.get(url, headers: requestHeaders);
+
+    // Logar o código de status da resposta e o corpo da resposta
+    logger.i("Status Code: ${response.statusCode}");
+    logger.i("Response Body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      if (data["data"] != null) {
+        return Cart.fromJson(data["data"]);
+      } else {
+        return Cart(products: [], userId: '', cartId: ''); 
+      }
+    } else if (response.statusCode == 401) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    } else {
+      return null;
+    }
+  }
+
+  Future<bool?> addCartItem(productId, qty) async {
+    var loginDetails = SharedService.loginDetails();
+    String? token = loginDetails['token'];
+
+    if (token == null) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    Map<String, String> requestHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    var url = Uri.http(Config.apiURL, Config.cartAPI);
+    var response = await client.post(
+      url,
+      headers: requestHeaders,
+      body: jsonEncode({
+        "products": [
+          {"product": productId, "qty": qty},
+        ],
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else if (response.statusCode == 401) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    } else {
+      return null;
+    }
+  }
+
+  Future<bool?> removeCartItem(productId, qty) async {
+    final loginDetails = SharedService.loginDetails();
+    String? token = loginDetails['token'];
+
+    if (token == null) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    Map<String, String> requestHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final url = Uri.http(Config.apiURL, Config.cartAPI);
+
+    try {
+      final response = await client.delete(
+        url,
+        headers: requestHeaders,
+        body: jsonEncode({"productId": productId, "qty": qty}),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 401) {
+        navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          "/login",
+          (route) => false,
+        );
+        return null;
+      } else {
+        return false;
+      }
+    } catch (e, s) {
+      logger.e("Erro durante a requisição DELETE", error: e, stackTrace: s);
+      return false;
     }
   }
 }

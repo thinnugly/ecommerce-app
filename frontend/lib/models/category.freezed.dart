@@ -22,7 +22,7 @@ Category _$CategoryFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Category {
   String get categoryName => throw _privateConstructorUsedError;
-  String get categoryImage => throw _privateConstructorUsedError;
+  String? get categoryImage => throw _privateConstructorUsedError;
   String get categoryId => throw _privateConstructorUsedError;
 
   /// Serializes this Category to a JSON map.
@@ -40,7 +40,7 @@ abstract class $CategoryCopyWith<$Res> {
   factory $CategoryCopyWith(Category value, $Res Function(Category) then) =
       _$CategoryCopyWithImpl<$Res, Category>;
   @useResult
-  $Res call({String categoryName, String categoryImage, String categoryId});
+  $Res call({String categoryName, String? categoryImage, String categoryId});
 }
 
 /// @nodoc
@@ -59,7 +59,7 @@ class _$CategoryCopyWithImpl<$Res, $Val extends Category>
   @override
   $Res call({
     Object? categoryName = null,
-    Object? categoryImage = null,
+    Object? categoryImage = freezed,
     Object? categoryId = null,
   }) {
     return _then(
@@ -70,10 +70,10 @@ class _$CategoryCopyWithImpl<$Res, $Val extends Category>
                     : categoryName // ignore: cast_nullable_to_non_nullable
                         as String,
             categoryImage:
-                null == categoryImage
+                freezed == categoryImage
                     ? _value.categoryImage
                     : categoryImage // ignore: cast_nullable_to_non_nullable
-                        as String,
+                        as String?,
             categoryId:
                 null == categoryId
                     ? _value.categoryId
@@ -94,7 +94,7 @@ abstract class _$$CategoryImplCopyWith<$Res>
   ) = __$$CategoryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String categoryName, String categoryImage, String categoryId});
+  $Res call({String categoryName, String? categoryImage, String categoryId});
 }
 
 /// @nodoc
@@ -112,7 +112,7 @@ class __$$CategoryImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? categoryName = null,
-    Object? categoryImage = null,
+    Object? categoryImage = freezed,
     Object? categoryId = null,
   }) {
     return _then(
@@ -123,10 +123,10 @@ class __$$CategoryImplCopyWithImpl<$Res>
                 : categoryName // ignore: cast_nullable_to_non_nullable
                     as String,
         categoryImage:
-            null == categoryImage
+            freezed == categoryImage
                 ? _value.categoryImage
                 : categoryImage // ignore: cast_nullable_to_non_nullable
-                    as String,
+                    as String?,
         categoryId:
             null == categoryId
                 ? _value.categoryId
@@ -152,7 +152,7 @@ class _$CategoryImpl implements _Category {
   @override
   final String categoryName;
   @override
-  final String categoryImage;
+  final String? categoryImage;
   @override
   final String categoryId;
 
@@ -196,7 +196,7 @@ class _$CategoryImpl implements _Category {
 abstract class _Category implements Category {
   factory _Category({
     required final String categoryName,
-    required final String categoryImage,
+    required final String? categoryImage,
     required final String categoryId,
   }) = _$CategoryImpl;
 
@@ -206,7 +206,7 @@ abstract class _Category implements Category {
   @override
   String get categoryName;
   @override
-  String get categoryImage;
+  String? get categoryImage;
   @override
   String get categoryId;
 
