@@ -31,13 +31,13 @@ class CartNotifier extends StateNotifier<CartState> {
   }
 
   Future<void> removeCartItem(productId, qty) async {
-    logger.i("🔄 Iniciando remoção de item: $productId, qty: $qty");
+    logger.i("Iniciando remoção de item: $productId, qty: $qty");
 
     // Chamada à API
     final success = await _apiService.removeCartItem(productId, qty);
 
     if (success != true) {
-      logger.i("❌ Falha ao remover item do servidor.");
+      logger.i("Falha ao remover item do servidor.");
       return;
     }
 
@@ -48,7 +48,7 @@ class CartNotifier extends StateNotifier<CartState> {
     );
 
     if (!isCartItemExist) {
-      logger.i("⚠️ Item $productId não encontrado no estado local.");
+      logger.i("Item $productId não encontrado no estado local.");
       return;
     }
 
@@ -60,7 +60,7 @@ class CartNotifier extends StateNotifier<CartState> {
 
     // Remover item
     updatedProducts.removeWhere((item) => item.product.productId == productId);
-    logger.i("🗑️ Produto $productId removido da lista local.");
+    logger.i("Produto $productId removido da lista local.");
 
     // Atualizar estado
     final updatedCartModel = state.cartModel!.copyWith(
@@ -69,7 +69,7 @@ class CartNotifier extends StateNotifier<CartState> {
     state = state.copyWith(cartModel: updatedCartModel);
 
     logger.i(
-      "✅ Estado atualizado com produtos: ${updatedProducts.map((e) => e.product.productId).toList()}",
+      "Estado atualizado com produtos: ${updatedProducts.map((e) => e.product.productId).toList()}",
     );
   }
 
@@ -119,7 +119,13 @@ class CartNotifier extends StateNotifier<CartState> {
     );
 
     logger.i(
-      "✅ Estado atualizado com produtos: ${updatedProducts.map((e) => e.product.productId).toList()}",
+      "Estado atualizado com produtos: ${updatedProducts.map((e) => e.product.productId).toList()}",
+    );
+  }
+
+  void clearCart() {
+    state = state.copyWith(
+      cartModel: state.cartModel?.copyWith(products: []),
     );
   }
 }

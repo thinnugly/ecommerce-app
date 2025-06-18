@@ -31,12 +31,12 @@ class CartItemWidget extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-              model.product.productImage != ""
-                  ? model.product.fullImagePath
-                  : "",
-              height: 100,
-              fit: BoxFit.fill,
-            ),
+                model.product.productImage != ""
+                    ? model.product.fullImagePath
+                    : "",
+                height: 140,
+                fit: BoxFit.fill,
+              ),
             ),
             const SizedBox(width: 12),
 
@@ -57,9 +57,31 @@ class CartItemWidget extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     "${Config.currency}${model.product.productPrice.toStringAsFixed(2)}",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color:
+                          model.product.calculateDiscount > 0
+                              ? Colors.red
+                              : Colors.black,
+                      fontWeight: FontWeight.bold,
+                      decoration:
+                          model.product.productSalePrice > 0
+                              ? TextDecoration.lineThrough
+                              : null,
+                      decorationColor:
+                          model.product.calculateDiscount > 0
+                              ? Colors.red
+                              : null,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    model.product.calculateDiscount > 0
+                        ? "${Config.currency}${model.product.productSalePrice}"
+                        : "",
                     style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.redAccent,
+                      fontSize: 13,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -82,7 +104,10 @@ class CartItemWidget extends StatelessWidget {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete_outline, color: Colors.red),
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                        ),
                         onPressed: () => onItemRemove!(model),
                       ),
                     ],

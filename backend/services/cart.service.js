@@ -131,9 +131,24 @@ async function removeCartItem(params, callback) {
   }
 }
 
+async function clearCartByUserId(params, callback) {
+  if (!params || !params.userId) {
+    return callback(new Error('userId is required.'));
+  }
+
+  try {
+    const result = await cart.findOneAndDelete({ userId: params.userId });
+    return callback(null, result); 
+  } catch (error) {
+    console.error('Error removing cart:', error);
+    return callback(error);
+  }
+}
+
 
 module.exports = {
   addCart,
   getCart,
   removeCartItem,
+  clearCartByUserId,
 };

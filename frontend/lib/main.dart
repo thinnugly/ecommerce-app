@@ -3,8 +3,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:frontend/pages/dashboard_page.dart';
 import 'package:frontend/pages/login_page.dart';
+// import 'package:frontend/pages/payment_page.dart';
 import 'package:frontend/pages/product_details_page.dart';
 import 'package:frontend/pages/products_page.dart';
 import 'package:frontend/pages/register_page.dart';
@@ -18,7 +20,10 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  await Hive.openBox('userBox'); // <- Abrir box para guardar dados do usuário
+  await Hive.openBox('userBox');
+  
+  
+   // <- Abrir box para guardar dados do usuário
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -38,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const DashboardPage(),
         '/products': (context) => const ProductsPage(),
         '/product-details': (context) => const ProductDetailsPage(),
+        // '/payments': (context) => const PaymentPage(),
       },
     );
   }

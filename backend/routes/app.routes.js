@@ -4,6 +4,7 @@ const userController = require("../controllers/users.controller");
 const sliderController = require("../controllers/sliders.controller");
 const relatedProductController = require("../controllers/related-product.controller");
 const cartController = require("../controllers/cart.controller");
+const orderController = require("../controllers/order.controller");
 const { authenticationToken} = require("../middleware/auth");
 
 const express = require("express");
@@ -36,6 +37,14 @@ router.delete("/relatedProduct/:productId/:relatedProductId", relatedProductCont
 router.post("/cart", [authenticationToken], cartController.create);
 router.get("/cart", [authenticationToken], cartController.findAll);
 router.delete("/cart", [authenticationToken], cartController.delete);
+router.delete("/cart/clear", [authenticationToken], cartController.clearCartByUserId);
 
+router.post("/order", [authenticationToken], orderController.createOrder);
+router.get("/order", [authenticationToken], orderController.getPStatus);
+router.post("/create-paypal/:orderId", [authenticationToken], orderController.createPaypal);
+router.post("/capture-paypal/:paypalOrderId", [authenticationToken], orderController.capturePaypal);
+
+router.get("/orders/payment-success", orderController.paymentSuccess);
+router.get("/orders/payment-cancel",  orderController.paymentCancel);
 
 module.exports = router;

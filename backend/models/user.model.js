@@ -16,6 +16,9 @@ const user = mongoose.model(
       password: {
         type: String,
         required: true,
+      },
+      stripeCustomerID: {
+        type: String,
       }
     },
     {

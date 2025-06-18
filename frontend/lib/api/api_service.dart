@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/config.dart';
 import 'package:frontend/models/cart.dart';
+import 'package:frontend/models/order_model.dart';
+import 'package:frontend/models/paypal_order_response.dart';
 import 'package:frontend/models/product.dart';
 import 'package:frontend/models/product_filter.dart';
 import 'package:frontend/models/slider.dart';
@@ -194,7 +196,7 @@ class APIService {
       if (data["data"] != null) {
         return Cart.fromJson(data["data"]);
       } else {
-        return Cart(products: [], userId: '', cartId: ''); 
+        return Cart(products: [], userId: '', cartId: '');
       }
     } else if (response.statusCode == 401) {
       navigatorKey.currentState?.pushNamedAndRemoveUntil(
@@ -273,6 +275,155 @@ class APIService {
         headers: requestHeaders,
         body: jsonEncode({"productId": productId, "qty": qty}),
       );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 401) {
+        navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          "/login",
+          (route) => false,
+        );
+        return null;
+      } else {
+        return false;
+      }
+    } catch (e, s) {
+      logger.e("Erro durante a requisição DELETE", error: e, stackTrace: s);
+      return false;
+    }
+  }
+
+  Future<OrderModel?> createOrder() async {
+    var loginDetails = SharedService.loginDetails();
+    String? token = loginDetails['token'];
+
+    if (token == null) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    Map<String, String> requestHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    var url = Uri.http(Config.apiURL, Config.orderAPI);
+    var response = await client.post(url, headers: requestHeaders);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      if (data["data"] != null) {
+        return OrderModel.fromJson(data["data"]);
+      }
+    } else if (response.statusCode == 401) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    return null;
+  }
+
+  Future<PaypalOrderResponse?> createPaypalOrder(String orderId) async {
+    var loginDetails = SharedService.loginDetails();
+    String? token = loginDetails['token'];
+
+    if (token == null) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    Map<String, String> requestHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    var url = Uri.http(Config.apiURL, "${Config.createPayPalAPI}/$orderId");
+    var response = await client.post(
+      url,
+      headers: requestHeaders,
+      body: jsonEncode({'orderId': orderId}),
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      logger.i("🧾 Resposta JSON: $data");
+      return PaypalOrderResponse.fromJson(data);
+    } else if (response.statusCode == 401) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    return null;
+  }
+
+  Future<String?> getPaymentStatus(String orderId) async {
+    var loginDetails = SharedService.loginDetails();
+    String? token = loginDetails['token'];
+
+    if (token == null) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    Map<String, String> requestHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    var url = Uri.http(Config.apiURL, Config.orderAPI, {'orderId': orderId});
+
+    var response = await client.get(url, headers: requestHeaders);
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      return data['paymentStatus']; // <- correto aqui
+    } else if (response.statusCode == 401) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    return null;
+  }
+
+  Future<bool?> clearCartByUserId() async {
+    final loginDetails = SharedService.loginDetails();
+    String? token = loginDetails['token'];
+
+    if (token == null) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        "/login",
+        (route) => false,
+      );
+      return null;
+    }
+
+    Map<String, String> requestHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final url = Uri.http(Config.apiURL, "${Config.cartAPI}/clear");
+
+    try {
+      final response = await client.delete(url, headers: requestHeaders);
 
       if (response.statusCode == 200) {
         return true;

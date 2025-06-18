@@ -1,4 +1,4 @@
-const cartService = require("../services/card.service");
+const cartService = require("../services/cart.service");
 
 
 exports.create = (req, res, next) => {
@@ -50,5 +50,21 @@ exports.delete = (req, res, next) => {
   });
 };
 
+
+exports.clearCartByUserId = (req, res, next) => {
+  var model = {
+    userId: req.user.data.userId,
+  };
+
+  cartService.clearCartByUserId(model, (error, results) => {
+    if(error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Success",
+      data: results,
+    });
+  });
+};
 
 
