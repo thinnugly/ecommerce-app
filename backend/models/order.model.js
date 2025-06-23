@@ -36,7 +36,8 @@ const order = mongoose.model(
             },
             transactionID: {
                 type: String,
-            },
+            }
+
         },
         {
             timestamps: true

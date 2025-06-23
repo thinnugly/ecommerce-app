@@ -19,6 +19,12 @@ const payment = mongoose.model(
             payerID: String,
             transactionID: String,
             amount: Number,
+            deliveryMethod: {
+                type: String,
+                enum: ["pickup", "delivery"],
+                default: "pickup"
+            },
+            deliveryFee: { type: Number, default: 0 },
         },
         { timestamps: true }
     )

@@ -48,6 +48,7 @@ dependencies:
   url_launcher: ^6.2.5
   webview_flutter: ^4.4.2
   webview_flutter_android: ^3.8.0
+  geolocator: ^14.0.1
 
 
   # The following adds the Cupertino Icons font to your application.

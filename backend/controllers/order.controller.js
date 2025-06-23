@@ -4,6 +4,7 @@ const {
   capturePaypalOrder,
   getPaymentStatus
 } = require("../services/order.service");
+const { payment } = require("../models/payment.model");
 
 exports.createOrder = (req, res, next) => {
   var model = {
@@ -23,6 +24,8 @@ exports.createOrder = (req, res, next) => {
 
 exports.createPaypal = async (req, res) => {
   try {
+    const { deliveryMethod } = req.body;
+    
     const paypalOrder = await createPaypalOrder(req.params.orderId);
 
     const approvalUrl = paypalOrder.links.find(
@@ -30,6 +33,12 @@ exports.createPaypal = async (req, res) => {
     ).href;
 
     const paypalOrderId = paypalOrder.id;
+
+    // Aqui, salva o deliveryMethod no banco, se quiser
+    await payment.updateOne(
+      { orderId: req.params.orderId },
+      { deliveryMethod }
+    );
 
     res.json({ approvalUrl, paypalOrderId });
   } catch (err) {

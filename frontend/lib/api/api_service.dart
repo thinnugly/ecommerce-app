@@ -329,7 +329,10 @@ class APIService {
     return null;
   }
 
-  Future<PaypalOrderResponse?> createPaypalOrder(String orderId) async {
+  Future<PaypalOrderResponse?> createPaypalOrder(
+    String orderId, {
+    String? deliveryMethod,
+  }) async {
     var loginDetails = SharedService.loginDetails();
     String? token = loginDetails['token'];
 
@@ -350,7 +353,10 @@ class APIService {
     var response = await client.post(
       url,
       headers: requestHeaders,
-      body: jsonEncode({'orderId': orderId}),
+      body: jsonEncode({
+        'orderId': orderId,
+        'deliveryMethod': deliveryMethod ?? 'pickup',
+      }),
     );
 
     if (response.statusCode == 200) {

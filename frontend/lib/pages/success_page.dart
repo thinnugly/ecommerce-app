@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SuccessPage extends StatelessWidget {
-  const SuccessPage({super.key});
+  final String deliveryMethod;
+
+  const SuccessPage({super.key, required this.deliveryMethod});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,11 @@ class SuccessPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
+            Text(
+              'Método de entrega: ${deliveryMethod == 'pickup' ? 'Retirar no local' : 'Entrega ao domicílio'}',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(
@@ -48,3 +55,7 @@ class SuccessPage extends StatelessWidget {
     );
   }
 }
+
+
+
+

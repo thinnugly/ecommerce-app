@@ -10,13 +10,60 @@ import 'package:frontend/providers.dart';
 import 'package:frontend/widgets/widget_cart_item.dart';
 import 'package:frontend/api/api_service.dart';
 import 'package:url_launcher/url_launcher.dart';
-// import 'package:frontend/pages/paypal_webview_page.dart';
 
 class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});
 
   @override
   CartPageState createState() => CartPageState();
+
+  // ✅ Método estático para exibir o diálogo de escolha
+  static Future<String?> showDeliveryOptionsDialog(BuildContext context) async {
+    String? selectedOption = 'pickup';
+    return showDialog<String>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Escolher método de entrega'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(
+                    title: const Text('Retirar no local'),
+                    value: 'pickup',
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() => selectedOption = value);
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: const Text('Entrega ao domicílio'),
+                    value: 'delivery',
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() => selectedOption = value);
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(selectedOption),
+                  child: const Text('Confirmar'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancelar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
 class CartPageState extends ConsumerState<CartPage> {
@@ -24,8 +71,7 @@ class CartPageState extends ConsumerState<CartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Cart")),
-      bottomNavigationBar:
-          _checkoutButtonNavabar(), // Aqui é onde o botão de checkout é exibido
+      bottomNavigationBar: _CheckoutButtonNavbar(parentContext: context),
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -40,7 +86,6 @@ class CartPageState extends ConsumerState<CartPage> {
     return ListView.builder(
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
-      scrollDirection: Axis.vertical,
       itemCount: cartProduct.length,
       itemBuilder: (context, index) {
         return CartItemWidget(
@@ -69,10 +114,7 @@ class CartPageState extends ConsumerState<CartPage> {
       return const Center(child: Text("Cart Empty"));
     }
 
-    return _buildCartItems(
-      cartState.cartModel!.products,
-      ref,
-    ); // Exibe os itens do carrinho
+    return _buildCartItems(cartState.cartModel!.products, ref);
   }
 }
 
@@ -86,9 +128,20 @@ Future<void> openPaypalUrl(String url) async {
   }
 }
 
-class _checkoutButtonNavabar extends ConsumerWidget {
+class _CheckoutButtonNavbar extends ConsumerStatefulWidget {
+  final BuildContext parentContext;
+
+  const _CheckoutButtonNavbar({required this.parentContext});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _CheckoutButtonNavbarState createState() => _CheckoutButtonNavbarState();
+}
+
+class _CheckoutButtonNavbarState extends ConsumerState<_CheckoutButtonNavbar> {
+  bool isProcessing = false;
+
+  @override
+  Widget build(BuildContext context) {
     final cartProvider = ref.watch(cartItemsProvider);
 
     if (cartProvider.cartModel == null ||
@@ -101,7 +154,7 @@ class _checkoutButtonNavabar extends ConsumerWidget {
       child: Container(
         height: 50,
         decoration: BoxDecoration(
-          color: Colors.blueAccent,
+          color: isProcessing ? Colors.grey : Colors.blueAccent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
@@ -117,125 +170,189 @@ class _checkoutButtonNavabar extends ConsumerWidget {
                 ),
               ),
               GestureDetector(
-                child: const Text(
-                  "Proccess to Check",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onTap: () async {
-                  final scaffold = ScaffoldMessenger.of(context);
-                  scaffold.showSnackBar(
-                    const SnackBar(content: Text('Processando pagamento...')),
-                  );
+                onTap:
+                    isProcessing
+                        ? null
+                        : () async {
+                          setState(() {
+                            isProcessing = true;
+                          });
 
-                  try {
-                    final order = await ref.read(apiService).createOrder();
-                    if (order == null) throw Exception('Falha ao criar pedido');
+                          debugPrint("Botão de pagamento clicado");
+                          final scaffold = ScaffoldMessenger.of(
+                            widget.parentContext,
+                          );
 
-                    final paypal = await ref
-                        .read(apiService)
-                        .createPaypalOrder(order.orderID);
-                    if (paypal == null) {
-                      throw Exception('Falha ao criar pagamento PayPal');
-                    }
+                          final deliveryOption =
+                              await CartPage.showDeliveryOptionsDialog(
+                                widget.parentContext,
+                              );
+                          if (deliveryOption == null) {
+                            setState(() => isProcessing = false);
+                            return;
+                          }
 
-                    await openPaypalUrl(paypal.approvalUrl);
-
-                    scaffold.showSnackBar(
-                      const SnackBar(
-                        content: Text('Depois de pagar, volte para a app.'),
-                      ),
-                    );
-
-                    // Verificação automática por 1 minuto (a cada 5 segundos)
-                    const totalChecks = 12; // 60s / 5s
-                    for (int i = 0; i < totalChecks; i++) {
-                      await Future.delayed(const Duration(seconds: 5));
-
-                      final status =
-                          await ref.read(apiService).getPaymentStatus(order.orderID);
-                          logger.i(status);
-                      if (status == 'COMPLETED') {
-                        await ref.read(apiService).clearCartByUserId();
-                        ref.read(cartItemsProvider.notifier).clearCart();
-
-                        if (context.mounted) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const SuccessPage(),
+                          scaffold.showSnackBar(
+                            const SnackBar(
+                              content: Text('Processando pagamento...'),
                             ),
                           );
-                        }
-                        return;
-                      }
-                    }
 
-                    // Após 1 minuto, mostra diálogo de verificação manual
-                    if (context.mounted) {
-                      showDialog(
-                        context: context,
-                        builder:
-                            (_) => AlertDialog(
-                              title: const Text('Pagamento pendente'),
-                              content: const Text(
-                                'Ainda não detectamos o pagamento.\n\nSe já pagou, clique abaixo para verificar novamente.',
+                          try {
+                            final order =
+                                await ref.read(apiService).createOrder();
+                            if (order == null) {
+                              throw Exception('Falha ao criar pedido');
+                            }
+
+                            final paypal = await ref
+                                .read(apiService)
+                                .createPaypalOrder(
+                                  order.orderID,
+                                  deliveryMethod: deliveryOption,
+                                );
+                            if (paypal == null) {
+                              throw Exception(
+                                'Falha ao criar pagamento PayPal',
+                              );
+                            }
+
+                            await openPaypalUrl(paypal.approvalUrl);
+
+                            scaffold.showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Depois de pagar, volte para a app.',
+                                ),
                               ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.of(context).pop();
+                            );
 
-                                    final status =
-                                        await ref
-                                            .read(apiService)
-                                            .getPaymentStatus(order.orderID);
-                                    if (status == 'COMPLETED') {
-                                      await ref
-                                          .read(apiService)
-                                          .clearCartByUserId();
-                                      ref
-                                          .read(cartItemsProvider.notifier)
-                                          .clearCart();
+                            const totalChecks = 12;
+                            for (int i = 0; i < totalChecks; i++) {
+                              await Future.delayed(const Duration(seconds: 5));
+                              final status = await ref
+                                  .read(apiService)
+                                  .getPaymentStatus(order.orderID);
+                              if (status == 'COMPLETED') {
+                                await ref.read(apiService).clearCartByUserId();
+                                ref
+                                    .read(cartItemsProvider.notifier)
+                                    .clearCart();
 
-                                      if (context.mounted) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => const SuccessPage(),
+                                if (widget.parentContext.mounted) {
+                                  Navigator.pushReplacement(
+                                    widget.parentContext,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => SuccessPage(
+                                            deliveryMethod: deliveryOption,
                                           ),
-                                        );
-                                      }
-                                    } else {
-                                      scaffold.showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Pagamento ainda não confirmado.',
+                                    ),
+                                  );
+                                }
+                                return;
+                              }
+                            }
+
+                            if (widget.parentContext.mounted) {
+                              showDialog(
+                                context: widget.parentContext,
+                                builder:
+                                    (_) => AlertDialog(
+                                      title: const Text('Pagamento pendente'),
+                                      content: const Text(
+                                        'Ainda não detectamos o pagamento.\n\nSe já pagou, clique abaixo para verificar novamente.',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () async {
+                                            Navigator.of(
+                                              widget.parentContext,
+                                            ).pop();
+                                            final status = await ref
+                                                .read(apiService)
+                                                .getPaymentStatus(
+                                                  order.orderID,
+                                                );
+                                            if (status == 'COMPLETED') {
+                                              await ref
+                                                  .read(apiService)
+                                                  .clearCartByUserId();
+                                              ref
+                                                  .read(
+                                                    cartItemsProvider.notifier,
+                                                  )
+                                                  .clearCart();
+
+                                              if (widget
+                                                  .parentContext
+                                                  .mounted) {
+                                                Navigator.pushReplacement(
+                                                  widget.parentContext,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (_) => SuccessPage(
+                                                          deliveryMethod:
+                                                              deliveryOption,
+                                                        ),
+                                                  ),
+                                                );
+                                              }
+                                            } else {
+                                              scaffold.showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Pagamento ainda não confirmado.',
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: const Text(
+                                            'Verificar pagamento manualmente',
                                           ),
                                         ),
-                                      );
-                                    }
-                                  },
-                                  child: const Text(
-                                    'Verificar pagamento manualmente',
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: const Text('Cancelar'),
-                                ),
-                              ],
+                                        TextButton(
+                                          onPressed:
+                                              () =>
+                                                  Navigator.of(
+                                                    widget.parentContext,
+                                                  ).pop(),
+                                          child: const Text('Cancelar'),
+                                        ),
+                                      ],
+                                    ),
+                              );
+                            }
+                          } catch (e) {
+                            scaffold.showSnackBar(
+                              SnackBar(content: Text('Erro: ${e.toString()}')),
+                            );
+                          } finally {
+                            setState(() {
+                              isProcessing = false;
+                            });
+                          }
+                        },
+                child:
+                    isProcessing
+                        ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
                             ),
-                      );
-                    }
-                  } catch (e) {
-                    scaffold.showSnackBar(
-                      SnackBar(content: Text('Erro, peguei: ${e.toString()}')),
-                    );
-                  }
-                },
+                          ),
+                        )
+                        : const Text(
+                          "Processar pagamento",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
               ),
             ],
           ),
