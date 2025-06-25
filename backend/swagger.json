@@ -11,7 +11,7 @@
         }
     },
     "host": "ecommerce-app-7j6d.onrender.com",
-    "basePath": "/api",
+    "basePath": "/",
     "tags": [
         {
             "name": "User",
