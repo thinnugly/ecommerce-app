@@ -10,7 +10,7 @@
             "email": "renatomuiambo24@gmail.com"
         }
     },
-    "host": "https://ecommerce-app-7j6d.onrender.com",
+    "host": "ecommerce-app-7j6d.onrender.com",
     "basePath": "/api",
     "tags": [
         {
