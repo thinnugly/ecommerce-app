@@ -6,8 +6,7 @@ exports.create = (req, res, next) => {
     if (err) {
       next(err);
     } else {
-      const path =
-        req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
+      const path = req.file ? req.file.location : ""; // URL do arquivo no S3
       var model = {
         productName: req.body.productName,
         category: req.body.category,
@@ -18,7 +17,7 @@ exports.create = (req, res, next) => {
         productSKU: req.body.productSKU,
         productType: req.body.productType,
         stockStatus: req.body.stockStatus,
-        productImage: path != "" ? "/" + path : "",
+        productImage: path,
       };
 
       productsService.createProduct(model, (error, results) => {
@@ -79,8 +78,7 @@ exports.update = (req, res, next) => {
     if (err) {
       next(err);
     } else {
-      const path =
-        req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
+      const path = req.file ? req.file.location : ""; // URL do arquivo no S3
       var model = {
         productId: req.params.id,
         productName: req.body.productName,
@@ -92,7 +90,7 @@ exports.update = (req, res, next) => {
         productSKU: req.body.productSKU,
         productType: req.body.productType,
         stockStatus: req.body.stockStatus,
-        productImage: path != "" ? "/" + path : "",
+        productImage: path,
       };
 
       productsService.upadateProduct(model, (error, results) => {

@@ -171,14 +171,6 @@ class APIService {
     var loginDetails = SharedService.loginDetails();
     String? token = loginDetails['token'];
 
-    if (token == null) {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        "/login",
-        (route) => false,
-      );
-      return null;
-    }
-
     Map<String, String> requestHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -213,14 +205,6 @@ class APIService {
     var loginDetails = SharedService.loginDetails();
     String? token = loginDetails['token'];
 
-    if (token == null) {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        "/login",
-        (route) => false,
-      );
-      return null;
-    }
-
     Map<String, String> requestHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -253,14 +237,6 @@ class APIService {
   Future<bool?> removeCartItem(productId, qty) async {
     final loginDetails = SharedService.loginDetails();
     String? token = loginDetails['token'];
-
-    if (token == null) {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        "/login",
-        (route) => false,
-      );
-      return null;
-    }
 
     Map<String, String> requestHeaders = {
       'Content-Type': 'application/json',
@@ -297,14 +273,6 @@ class APIService {
     var loginDetails = SharedService.loginDetails();
     String? token = loginDetails['token'];
 
-    if (token == null) {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        "/login",
-        (route) => false,
-      );
-      return null;
-    }
-
     Map<String, String> requestHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -335,14 +303,6 @@ class APIService {
   }) async {
     var loginDetails = SharedService.loginDetails();
     String? token = loginDetails['token'];
-
-    if (token == null) {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        "/login",
-        (route) => false,
-      );
-      return null;
-    }
 
     Map<String, String> requestHeaders = {
       'Content-Type': 'application/json',
@@ -378,14 +338,6 @@ class APIService {
     var loginDetails = SharedService.loginDetails();
     String? token = loginDetails['token'];
 
-    if (token == null) {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        "/login",
-        (route) => false,
-      );
-      return null;
-    }
-
     Map<String, String> requestHeaders = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -412,14 +364,6 @@ class APIService {
   Future<bool?> clearCartByUserId() async {
     final loginDetails = SharedService.loginDetails();
     String? token = loginDetails['token'];
-
-    if (token == null) {
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        "/login",
-        (route) => false,
-      );
-      return null;
-    }
 
     Map<String, String> requestHeaders = {
       'Content-Type': 'application/json',

@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_annotation_target
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:frontend/config.dart';
+// import 'package:frontend/config.dart';
 
 part 'slider.freezed.dart';
 part 'slider.g.dart';
@@ -22,5 +22,5 @@ class SliderModel with _$SliderModel {
 }
 
 extension SliderModelExt on SliderModel {
-  String get fullImagePath => Config.imageURL + sliderImage;
+  String get fullImagePath => sliderImage;
 }

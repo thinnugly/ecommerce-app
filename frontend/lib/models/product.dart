@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:frontend/config.dart';
+// import 'package:frontend/config.dart';
 
 import 'category.dart';
 part 'product.freezed.dart';
@@ -30,7 +30,7 @@ class Product with _$Product {
 }
 
 extension ProductExt on Product {
-  String get fullImagePath => Config.imageURL + productImage;
+  String get fullImagePath => productImage;
 
   int get calculateDiscount {
     double disPercent = 0;

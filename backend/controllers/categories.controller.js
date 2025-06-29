@@ -4,14 +4,13 @@ const upload = require("../middleware/category.upload");
 exports.create = (req, res, next) => {
   upload(req, res, function (err) {
     if (err) {
-      next(err);
+      return next(err);
     } else {
-      const path =
-        req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
-      var model = {
+      const path = req.file ? req.file.location : ""; // URL do arquivo no S3
+      const model = {
         categoryName: req.body.categoryName,
         categoryDescription: req.body.categoryDescription,
-        categoryImage: path != "" ? "/" + path : "",
+        categoryImage: path, // Armazena o URL do S3
       };
 
       categoriesService.createCategory(model, (error, results) => {
@@ -27,6 +26,7 @@ exports.create = (req, res, next) => {
     }
   });
 };
+
 
 exports.findAll = (req, res, next) => {
   var model = {
@@ -69,13 +69,12 @@ exports.update = (req, res, next) => {
     if (err) {
       next(err);
     } else {
-      const path =
-        req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
+      const path = req.file ? req.file.location : "";
       var model = {
         categoryId: req.params.id,
         categoryName: req.body.categoryName,
         categoryDescription: req.body.categoryDescription,
-        categoryImage: path != "" ? "/" + path : "",
+        categoryImage: path, // Armazena o URL do S3
       };
 
       categoriesService.upadateCategory(model, (error, results) => {

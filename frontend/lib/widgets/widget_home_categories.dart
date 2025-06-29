@@ -87,6 +87,7 @@ class HomeCategoriesWidget extends ConsumerWidget {
                     height: 50,
                     alignment: Alignment.center,
                     child: Image.network(data.fullImagePath, height: 50),
+                    
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -99,7 +100,7 @@ class HomeCategoriesWidget extends ConsumerWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Icon(Icons.keyboard_arrow_right, size: 13),
+                      const Icon(Icons.keyboard_arrow_right, size: 13)
                     ],
                   ),
                 ],

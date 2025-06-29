@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const MONGO_DB_CONFIG = {
-  DB: process.env.MONGO_DB_URI,
+  DB: process.env.MONGO_DB_URI || "mongodb+srv://renatomuiambo24:B6nQmkm9FKFye4IJ@cluster0.zsfv2xd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
   PAGE_SIZE: parseInt(process.env.PAGE_SIZE) || 10,
 };
 

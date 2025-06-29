@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:frontend/config.dart';
+// import 'package:frontend/config.dart';
 
 part 'category.freezed.dart';
 part 'category.g.dart';
@@ -20,5 +20,5 @@ class Category with _$Category {
 }
 
 extension CategoryExt on Category {
-  String get fullImagePath => Config.imageURL + categoryImage!;
+  String get fullImagePath => categoryImage ?? ''; 
 }

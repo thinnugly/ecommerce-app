@@ -6,12 +6,11 @@ exports.create = (req, res, next) => {
     if (err) {
       next(err);
     } else {
-      const path =
-        req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
+      const path = req.file ? req.file.location : ""; // URL do arquivo no S3
       var model = {
         sliderName: req.body.sliderName,
         sliderDescription: req.body.sliderDescription,
-        sliderImage: path != "" ? "/" + path : "",
+        sliderImage: path,
       };
 
       slidersService.createSlider(model, (error, results) => {
@@ -69,13 +68,12 @@ exports.update = (req, res, next) => {
     if (err) {
       next(err);
     } else {
-      const path =
-        req.file != undefined ? req.file.path.replace(/\\/g, "/") : "";
+      const path = req.file ? req.file.location : ""; // URL do arquivo no S3
       var model = {
         sliderId: req.params.id,
         sliderName: req.body.sliderName,
         sliderDescription: req.body.sliderDescription,
-        sliderImage: path != "" ? "/" + path : "",
+        sliderImage: path,
       };
 
       slidersService.upadateSlider(model, (error, results) => {

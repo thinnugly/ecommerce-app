@@ -16,7 +16,7 @@ class Config {
   }
 
   static const String appName = "In-app purchases";
-  static const String imageURL = "http://localhost:4000";
+  static const String imageURL = "https://ecommerce-app-bucket-i.s3.af-south-1.amazonaws.com";
   static const String categoryAPI = "api/category";
   static const String productAPI = "api/product";
   static const String registerAPI = "api/register";
